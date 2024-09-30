@@ -1,26 +1,17 @@
-# Etapa de construção
 FROM ghcr.io/cirruslabs/flutter:3.24.3 AS build
 
-# Define o diretório de trabalho no container
 WORKDIR /app
 
-# Copia o código da aplicação para o container
 COPY . .
 
-# Instala as dependências do Flutter
 RUN flutter pub get
 
-# Gera o build para a web
 RUN flutter build web
 
-# Etapa para servir a aplicação
 FROM nginx:alpine
 
-# Copia o build da aplicação Flutter (gerado na etapa anterior) para o NGINX
 COPY --from=build /app/build/web /usr/share/nginx/html
 
-# Expor a porta 80
 EXPOSE 80
 
-# Comando padrão para iniciar o NGINX
 CMD ["nginx", "-g", "daemon off;"]
